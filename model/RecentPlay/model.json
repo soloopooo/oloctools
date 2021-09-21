@@ -1,0 +1,37 @@
+{
+  "imgSize": {
+    "weight": 1920,
+    "height": 1080
+  },
+  "modelBg": "model/RecentPlay/resource/score_model.png",
+  "info": {
+    "playTimeDay": {
+        "location": {
+          "x": 650,
+          "y": 489
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+    "playTimeMin": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      }
+    }
+}
