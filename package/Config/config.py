@@ -8,7 +8,7 @@ class RecentPlay:
     class BackGround:
         def __init__(self):
             config = configparser.ConfigParser()
-            path = r'D:\IDEAproject\Python\oloctools\config\RecentPlay.ini'
+            path = r'config\RecentPlay.ini'
             config.read(path)
             self.config = config
 
@@ -24,7 +24,7 @@ class RecentPlay:
     class AutoSave:
         def __init__(self):
             config = configparser.ConfigParser()
-            path = r'D:\IDEAproject\Python\oloctools\config\RecentPlay.ini'
+            path = r'config\RecentPlay.ini'
             config.read(path)
             self.config = config
 
@@ -35,7 +35,7 @@ class RecentPlay:
             return self.config.getboolean('AutoSave', 'askPerGenerate')
 
         def accAutoSave(self):
-            return self.config.getboolean('AutoSave', 'acc_AutoSave')
+            return self.config.getint('AutoSave', 'acc_AutoSave')
 
 
 if __name__ == '__main__':

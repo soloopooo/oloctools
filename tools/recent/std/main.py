@@ -1,7 +1,9 @@
+from re import X
 from package.info.std import StdInfo
 from loguru import logger
-import bgMaker
+from .bgMaker import BgMaker
 from PIL import Image
+from package.Image.pilJudge import pilJudge
 import ujson
 import package.Config.config as configs
 from .memPlayTime import get_played_time
@@ -23,7 +25,7 @@ def main():
     if stat:
         im = bg(info)
         im.show()
-        ifSave(im)
+        ifSave(im, info)
     else:
         logger.error('游戏状态不正确')
         return
@@ -76,17 +78,22 @@ def bg(info):
         :param bg: pil格式背景
         :return:pil格式的已经合并完背景和模板的图片
         """
+        x = Image.open(model)
         logger.info('合并背景图与模板')
-        im = bg.paste(model, (0, 0), model)
-        return im
+        x = x.convert('RGBA')
+        bg = bg.convert('RGBA')
+        # im = bg.paste(x, (0, 0, bg.width, bg.height)).convert('RGB')
+        bg.paste(x, (0, 0), x)
+        return bg
 
     logger.info('处理背景图片')
-    bg = bgMaker.BgMaker(info)
-    bg.bg()
+    bgMaker = BgMaker(info)
+    bg = bgMaker.bgMake()
     logger.info('背景图片处理完毕')
 
-    modelJson = ujson.load(r'model/RecentPlay/model.json')
+    modelJson = ujson.load(open(r'model/RecentPlay/model.json'))
     im = paste(modelJson['modelBg'], bg)
+    im = output(im, info)
     return im
 
 
@@ -99,13 +106,13 @@ def output(im, info):
     """
     logger.info('准备输出信息')
     logger.info('加载模板文件')
-    jsonInfo = ujson.load(r'model/RecentPlay/model.json')['info']
+    jsonInfo = ujson.load(open(r'model/RecentPlay/model.json'))['info']
 
     def playTime(im):
         """
-        使用项目根目录下的GameTime.dll对游戏结算界面的游玩时间进行读取
-        若因为任何原因读取失败则使用本地实际按
-        :return:
+        打印时间
+        时间采用本地时间
+        :return: pil格式图像
         """
         try:
             logger.info('读取游玩时间')
@@ -118,11 +125,54 @@ def output(im, info):
             time = time_str.split(' ')
             time[1] = time[1].split(':')[0] + ':' + time[1].split(':')[1]
 
-        i = jsonInfo['playTimeDay']
-        im = info_print(im, )
-        '''Coding now'''
-        '''正在写时间输出模块'''
+        '''try:
+            logger.info('读取本地时间')
+            time_str = strftime("%Y/%m/%d %H:%M", localtime())
+            time = time_str.split(' ')
+            time[1] = time[1].split(':')[0] + ':' + time[1].split(':')[1]
+        except Exception as e:
+            logger.error('本地时间读取失败，错误:{e}')
+            return'''
+
+        i = jsonInfo['playTime']['playTimeDay']
+        color = (i['color']['r'], i['color']['g'], i['color']['b'])
+        im = info_print(im, time[0], i['size'], i['font'],
+                        i['location']['x'], i['location']['y'],
+                        color, i['align'])
+        
+        i = jsonInfo['playTime']['playTimeMin']
+        color = (i['color']['r'], i['color']['g'], i['color']['b'])
+        im = info_print(im, time[1], i['size'], i['font'],
+                        i['location']['x'], i['location']['y'],
+                        color, i['align'])
         return im
+
+    def normalInfo(im, info):
+        """[summary]
+        打印一般的，不需要或只需要简单处理的信息
+        Args:
+            im (pil图像): pil图像
+            info (gosu信息): gosu信息
+
+        Returns:
+            [im]: pil格式图像
+        """
+        i = jsonInfo['normal']
+        keys = list(i.keys())
+        n = 0
+        for a in i:
+            x = keys[n]
+            text = eval(f'info.{x}()')
+            color = (i[f'{a}']['color']['r'], i[f'{a}']
+                    ['color']['g'], i[f'{a}']['color']['b'])
+            im = info_print(im, text, i[f'{a}']['size'], i[f'{a}']['font'], i[f'{a}']['location']
+                            ['x'], i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
+            n += 1
+        return im
+    
+    im = playTime(im)
+    im = normalInfo(im, info)
+
     return im
 
 
@@ -150,5 +200,4 @@ def ifSave(im, info):
             im.close()
         else:
             pass
-
 

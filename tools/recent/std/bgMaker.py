@@ -26,18 +26,18 @@ class BgMaker:
         self.bg = Image.open(bg).convert('RGB')
         logger.info('转换背景格式')
 
-    def bg(self):
+    def bgMake(self):
         """
         对background进行处理并返回
         :return: pil图像
         """
         dim = self.bgconfig.dim()
         blur = self.bgconfig.blur()
-        model = ujson.load(r'model\RecentPlay\model.json')
+        model = ujson.load(open(r'model\RecentPlay\model.json'))
         weight = model['imgSize']['weight']
         height = model['imgSize']['height']
 
-        im = self.bg()
+        im = self.bg
 
         im = im.filter(ImageFilter.GaussianBlur(radius=blur))  # 高斯模糊
         logger.info(f'对背景进行{blur}像素半径高斯模糊')

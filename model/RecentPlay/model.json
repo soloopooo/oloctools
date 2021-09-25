@@ -5,7 +5,8 @@
   },
   "modelBg": "model/RecentPlay/resource/score_model.png",
   "info": {
-    "playTimeDay": {
+    "playTime": {
+      "playTimeDay": {
         "location": {
           "x": 650,
           "y": 489
@@ -19,7 +20,317 @@
         },
         "align": "cc"
       },
-    "playTimeMin": {
+      "playTimeMin": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      }
+    },
+    "normal": {
+      "title": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "artist": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "cs": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "od": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "ar": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "hp": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "bid": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "sid": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "c300": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "c100": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "c50": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "c0": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "slider_breaks": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "stars": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_ss": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_99": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_98": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_97": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_96": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_95": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "pp_fc": {
+        "location": {
+          "x": 650,
+          "y": 601
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 31,
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255
+        },
+        "align": "cc"
+      },
+      "player_name": {
         "location": {
           "x": 650,
           "y": 601
@@ -34,4 +345,5 @@
         "align": "cc"
       }
     }
+  }
 }

@@ -23,6 +23,7 @@ def stretchZoom(im, weight, height):
     else:  # 如果图片符合指定比例
         scale = weight/im.width
 
-    im = im.resize(weight, height)
+    # im = im.resize(im.width*scale, im.height*scale)
+    im = im.resize((weight, height))
     return im
 

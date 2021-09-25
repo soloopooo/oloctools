@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import httpx
+import ujson
 from loguru import logger
 
 
@@ -8,14 +9,14 @@ class StdInfo:
     返回gosu关于std成绩的相应信息
     """
     def __init__(self):
-        try:
+        '''try:
             r = httpx.get('http://localhost:24050/json')
         except Exception:
             logger.error('无法获取gosu的信息，请检查是否开启')
             return
-        self.info = r.json()
+        self.info = r.json()'''
         # self.info = loads(get('http://localhost:24050/json').content)
-        # self.info = load(open('./package/gosu_output.json', 'r', encoding='utf8'))
+        self.info = ujson.load(open('gosu.json', encoding='gb18030', errors='ignore'))
 
     def state(self):
         return self.info['menu']['state']
