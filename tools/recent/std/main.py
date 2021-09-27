@@ -1,3 +1,4 @@
+import os
 from re import X
 from package.info.std import StdInfo
 from loguru import logger
@@ -106,7 +107,7 @@ def output(im, info):
     """
     logger.info('准备输出信息')
     logger.info('加载模板文件')
-    jsonInfo = ujson.load(open(r'model/RecentPlay/model.json'))['info']
+    jsonInfo = ujson.load(open(r'model/RecentPlay/model.json'))
 
     def playTime(im):
         """
@@ -134,13 +135,13 @@ def output(im, info):
             logger.error('本地时间读取失败，错误:{e}')
             return'''
 
-        i = jsonInfo['playTime']['playTimeDay']
+        i = jsonInfo['info']['playTime']['playTimeDay']
         color = (i['color']['r'], i['color']['g'], i['color']['b'])
         im = info_print(im, time[0], i['size'], i['font'],
                         i['location']['x'], i['location']['y'],
                         color, i['align'])
-        
-        i = jsonInfo['playTime']['playTimeMin']
+
+        i = jsonInfo['info']['playTime']['playTimeMin']
         color = (i['color']['r'], i['color']['g'], i['color']['b'])
         im = info_print(im, time[1], i['size'], i['font'],
                         i['location']['x'], i['location']['y'],
@@ -157,21 +158,137 @@ def output(im, info):
         Returns:
             [im]: pil格式图像
         """
-        i = jsonInfo['normal']
+        i = jsonInfo['info']['normal']
         keys = list(i.keys())
         n = 0
         for a in i:
             x = keys[n]
             text = eval(f'info.{x}()')
+
             color = (i[f'{a}']['color']['r'], i[f'{a}']
-                    ['color']['g'], i[f'{a}']['color']['b'])
+                     ['color']['g'], i[f'{a}']['color']['b'])
             im = info_print(im, text, i[f'{a}']['size'], i[f'{a}']['font'], i[f'{a}']['location']
                             ['x'], i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
             n += 1
         return im
+
+    def rankStatus(im, info):
+        """[summary]
+        输出铺面状态图标
+
+        unknown 0
+        unsubmitted 1
+        pending/wip/graveyard 2
+        unused 3
+        ranked 4
+        approved 5
+        qualified 6
+        loved 7
+
+        Args:
+            im: pil格式图片
+            info: gosu信息
+
+        Returns:
+            [pil image]: 输出完状态图标的pil图片
+        """
+        statusIcon = jsonInfo['rankStatusIcon']
+        status = info.map_status()
+        status_list = [statusIcon['unknown'],
+                       statusIcon['unsubmitted'],
+                       statusIcon['pending_wip_graveyard'],
+                       statusIcon['unused'],
+                       statusIcon['ranked'],
+                       statusIcon['approved'],
+                       statusIcon['qualified'],
+                       statusIcon['loved']
+                       ]
+        status_img = status_list[status]
+        status_img = Image.open(status_img)
+        status_img.resize((jsonInfo['info']['mapStatus']['size']['w'],
+                           jsonInfo['info']['mapStatus']['size']['h']))
+        im.paste(status_img, (jsonInfo['info']['mapStatus']['location']['x'],
+                              jsonInfo['info']['mapStatus']['location']['y']), status_img)
+        return im
+
+    def rankIcon(im, info):
+        """输出成绩评分图标
+
+        Args:
+            im (pil图像): pil格式图像
+            info (gosu): gosu的信息
+        Return:
+            im (pil图像): pil格式图像
+        """
+        rankIcon = jsonInfo['scoreRankIcon']
+        rank = info.rank_result()
+        rank = str(rank)
+
+        if info.state() == 2:
+            rank = Image.open(rankIcon['F'])
+        elif info.state() == 7:
+            if rank == 'SSH':
+                rank = Image.open(rankIcon['SSH'])
+            elif rank == 'SS':
+                rank = Image.open(rankIcon['SS'])
+            elif rank == 'SH':
+                rank = Image.open(rankIcon['SH'])
+            elif rank == 'S':
+                rank = Image.open(rankIcon['S'])
+            elif rank == 'A':
+                rank = Image.open(rankIcon['A'])
+            elif rank == 'B':
+                rank = Image.open(rankIcon['B'])
+            elif rank == 'C':
+                rank = Image.open(rankIcon['C'])
+            elif rank == 'D':
+                rank = Image.open(rankIcon['D'])
+
+        rank = rank.resize((rankIcon['info']['size']['w'], rankIcon['info']['size']['h'])).convert('RGBA')
+        im.paste(rank, (rankIcon['info']['location']['x'], rankIcon['info']['location']['y']), rank)
+        return im
+
+    def innormal(im, info):
+        """打印需要简单处理的信息
+
+        Args:
+            im (pil image): 要打印的图像
+            info (gosu): gosu信息
+
+        Returns:
+            im: 打印完毕的图像
+        """
+
+        def textJudge(key, info):
+            if key == 'bpm':
+                text = str(info.bpm_max()) if info.bpm_min() == info.bpm_max() else str(info.bpm_min()) + '-' + str(
+                            info.bpm_max())
+                """Coding now"""
+            return text
+
+        i = jsonInfo['info']['innormal']
+        keys = list(i.keys())
+        n = 0
+        for a in i:
+            x = keys[n]
+            text = textJudge(x, info)
+
+
+            color = (i[f'{a}']['color']['r'], i[f'{a}']
+                     ['color']['g'], i[f'{a}']['color']['b'])
+            im = info_print(im, text, i[f'{a}']['size'], i[f'{a}']['font'], i[f'{a}']['location']
+                            ['x'], i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
+            n += 1
+        return im
+
+    def outputMain(im, info):
+        im = playTime(im)
+        im = normalInfo(im, info)
+        im = rankStatus(im, info)
+        im = rankIcon(im, info)
+        return im
     
-    im = playTime(im)
-    im = normalInfo(im, info)
+    im = outputMain(im, info)
 
     return im
 
@@ -187,17 +304,46 @@ def ifSave(im, info):
     allConfig = configs.RecentPlay()
     autoSaveConfig = allConfig.AutoSave()
 
+    im = im.convert('RGB')
+    time = strftime("%Y-%m-%d_%H-%M", localtime())
+
     if autoSaveConfig.rankAutoSave(info.rank_result()):
-        im.save(r'data/recentPlay')
+        logger.info('达到指定rank，自动保存')
+        logger.info(f'正在保存成绩图，名称为:{time}.jpg')
+        im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
         im.close()
-    elif autoSaveConfig.accAutoSave() <= info.accuracy():
-        im.save(r'data/recentPlay')
+    elif autoSaveConfig.accAutoSave() >= info.accuracy():
+        logger.info('达到指定acc，自动保存')
+        logger.info(f'正在保存成绩图，名称为:{time}.jpg')
+        im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
         im.close()
     else:
         sec = input('是否保存成绩图？(Y/N)')
         if sec == 'Y' or sec == 'y':
-            im.save(r'data/recentPlay')
+            try:
+                logger.info(f'正在保存成绩图，名称为:{time}.jpg')
+                im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
+            except FileNotFoundError as e:
+                logger.warning(f'出现错误:{e}')
+                logger.info('判断目录是否存在')
+                isExists = os.path.exists(r'data/recentPlay/')
+                if not isExists:
+                    logger.info('目录不存在,创建目录')
+                    os.makedirs(r'data/recentPlay/')
+                isExists = os.path.exists(r'data/recentPlay/')
+                if isExists:
+                    logger.info('目录已创建')
+                    try:
+                        logger.info(f'正在保存成绩图，名称为:{time}.jpg')
+                        im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
+                    except Exception as e:
+                        logger.error(f'保存图片失败:{e}')
+                else:
+                    logger.error('创建失败')
+                    logger.error('保存图片失败')
+            except Exception as e:
+                logger.error(f'保存图片失败:{e}')
+            logger.info('尝试保存完毕')
             im.close()
         else:
             pass
-

@@ -35,14 +35,17 @@ oloctools实现了一些便利功能（maybe
 - [ ] 铺面参数筛选下载
 - [ ] 批量指定参数删图
 - [ ] gosu自动部署
-- [ ] osu自动部署
+- [ ] InGameDownloader自动部署
 - [ ] 使用reply一键上传视频至bilibili
 
 </details>
 
 ## 感谢
-[Onebot](https://github.com/howmanybots/onebot)  
+[Gosumemory](https://github.com/l3lackShark/gosumemory)  
 
 ## 更新日志
 ### 2021/9/26
 * 本地成绩图初步完成
+
+### 2021/9/22
+* 计划全面重写
