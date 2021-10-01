@@ -72,6 +72,7 @@ def bg(info):
     :param info:gosu已经读取为py对象的json
     :return: pil图像格式的带bg的模板
     """
+
     def paste(model, bg):
         """
         合并背景和模板，需要大小相同
@@ -166,9 +167,9 @@ def output(im, info):
             text = eval(f'info.{x}()')
 
             color = (i[f'{a}']['color']['r'], i[f'{a}']
-                     ['color']['g'], i[f'{a}']['color']['b'])
+            ['color']['g'], i[f'{a}']['color']['b'])
             im = info_print(im, text, i[f'{a}']['size'], i[f'{a}']['font'], i[f'{a}']['location']
-                            ['x'], i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
+            ['x'], i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
             n += 1
         return im
 
@@ -262,8 +263,21 @@ def output(im, info):
         def textJudge(key, info):
             if key == 'bpm':
                 text = str(info.bpm_max()) if info.bpm_min() == info.bpm_max() else str(info.bpm_min()) + '-' + str(
-                            info.bpm_max())
-                """Coding now"""
+                    info.bpm_max())
+            elif key == 'mapper':
+                text = str('mapped by ' + str({0}).format(info.mapper()))
+            elif key == ('key_count_k1' or 'key_count_k2' or 'key_count_m1' or 'key_count_m2'):
+                text = str(eval(f'info.{key}()') if eval(f'info.{key}()') != 0 else key[:-2])
+            elif key == 'score':
+                text = '{:,}'.format(info.score())
+            elif key == 'max_combo':
+                text = '{:,}'.format(info.max_combo()) + 'x'
+            elif key == 'accuracy':
+                text = str({0}).format(info.accuracy()) + '%'
+            elif key == 'ur':
+                text = round(float(str({0}).format(info.ur())), 2)
+            else:
+                text = eval(f'info.{key}()')
             return text
 
         i = jsonInfo['info']['innormal']
@@ -273,11 +287,9 @@ def output(im, info):
             x = keys[n]
             text = textJudge(x, info)
 
-
-            color = (i[f'{a}']['color']['r'], i[f'{a}']
-                     ['color']['g'], i[f'{a}']['color']['b'])
-            im = info_print(im, text, i[f'{a}']['size'], i[f'{a}']['font'], i[f'{a}']['location']
-                            ['x'], i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
+            color = (i[f'{a}']['color']['r'], i[f'{a}']['color']['g'], i[f'{a}']['color']['b'])
+            im = info_print(im, text, i[f'{a}']['size'], i[f'{a}']['font'], i[f'{a}']['location']['x'],
+                            i[f'{a}']['location']['y'], color, i[f'{a}']['align'])
             n += 1
         return im
 
@@ -286,8 +298,9 @@ def output(im, info):
         im = normalInfo(im, info)
         im = rankStatus(im, info)
         im = rankIcon(im, info)
+        im = innormal(im, info)
         return im
-    
+
     im = outputMain(im, info)
 
     return im

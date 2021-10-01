@@ -16,10 +16,16 @@ def stretchZoom(im, weight, height):
 
     if imgScale > modelScale:  # 如果图片比指定比例宽
         scale = height/im.height
-        im = im.crop((im.width/2)-(weight/2), 0, (im.width/2)+(weight/2), im.height)
+        try:
+            im = im.crop((im.width/2)-(weight/2), 0, (im.width/2)+(weight/2), im.height)
+        except TypeError:
+            im = im.crop(((im.width / 2) - (weight / 2), 0), ((im.width / 2) + (weight / 2), im.height))
     elif imgScale < modelScale:  # 如果图片比指定比例高
         scale = weight/im.width
-        im = im.crop(0, (im.height/2)-(height/2), im.width, (im.height/2)+(height/2))
+        try:
+            im = im.crop(0, (im.height/2)-(height/2), im.width, (im.height/2)+(height/2))
+        except TypeError:
+            im = im.crop((0, (im.height / 2) - (height / 2), im.width, (im.height / 2) + (height / 2)))
     else:  # 如果图片符合指定比例
         scale = weight/im.width
 

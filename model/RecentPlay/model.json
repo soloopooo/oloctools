@@ -389,129 +389,129 @@
     "innormal": {
       "bpm": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 121,
+          "y": 63
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 41,
         "color": {
           "r": 255,
-          "g": 255,
-          "b": 255
+          "g": 142,
+          "b": 211
         },
-        "align": "cc"
+        "align": "ra"
       },
       "mapper": {
         "location": {
           "x": 960,
-          "y": 760
+          "y": 347
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
+        "font": "resource/fonts/Torus-Regular.ttf",
         "size": 48,
         "color": {
-          "r": 255,
+          "r": 111,
           "g": 255,
-          "b": 255
+          "b": 250
         },
         "align": "cc"
       },
       "key_count_k1": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 157,
+          "y": 1012
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 28,
         "color": {
-          "r": 255,
-          "g": 255,
-          "b": 255
+          "r": 235,
+          "g": 194,
+          "b": 0
         },
         "align": "cc"
       },
       "key_count_k2": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 236,
+          "y": 1012
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 28,
         "color": {
-          "r": 255,
-          "g": 255,
-          "b": 255
+          "r": 235,
+          "g": 194,
+          "b": 0
         },
         "align": "cc"
       },
       "key_count_m1": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 315,
+          "y": 1012
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 28,
         "color": {
-          "r": 255,
-          "g": 255,
-          "b": 255
+          "r": 235,
+          "g": 194,
+          "b": 0
         },
         "align": "cc"
       },
       "key_count_m2": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 393,
+          "y": 1012
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 28,
         "color": {
-          "r": 255,
-          "g": 255,
-          "b": 255
+          "r": 235,
+          "g": 194,
+          "b": 0
         },
         "align": "cc"
       },
       "score": {
         "location": {
           "x": 960,
-          "y": 760
+          "y": 221
         },
         "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "size": 90,
         "color": {
-          "r": 255,
-          "g": 255,
-          "b": 255
+          "r": 226,
+          "g": 226,
+          "b": 226
         },
         "align": "cc"
       },
       "max_combo": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 1614,
+          "y": 337
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 41,
         "color": {
           "r": 255,
-          "g": 255,
-          "b": 255
+          "g": 142,
+          "b": 211
         },
-        "align": "cc"
+        "align": "lc"
       },
       "accuracy": {
         "location": {
-          "x": 960,
-          "y": 760
+          "x": 1492,
+          "y": 230
         },
-        "font": "resource/fonts/Torus-SemiBold.ttf",
-        "size": 48,
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 41,
         "color": {
           "r": 255,
-          "g": 255,
-          "b": 255
+          "g": 142,
+          "b": 211
         },
-        "align": "cc"
+        "align": "lc"
       },
       "ur": {
         "location": {
