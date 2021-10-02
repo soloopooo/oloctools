@@ -2,21 +2,25 @@
 import httpx
 import ujson
 from loguru import logger
+from package import oppadc
 
 
 class StdInfo:
     """
     返回gosu关于std成绩的相应信息
     """
+
     def __init__(self):
-        '''try:
+        try:
             r = httpx.get('http://localhost:24050/json')
-        except Exception:
-            logger.error('无法获取gosu的信息，请检查是否开启')
+        except Exception as e:
+            logger.error(f'无法获取gosu的信息，请检查是否开启 {e}')
             return
-        self.info = r.json()'''
-        # self.info = loads(get('http://localhost:24050/json').content)
-        self.info = ujson.load(open('gosu.json', encoding='gb18030', errors='ignore'))
+        self.info = r.json()
+        # self.info = ujson.load(open('gosu.json', encoding='gb18030', errors='ignore'))
+        self.map = MapInfo(
+            self.info['settings']['folders']['songs'] + '\\' + self.info['menu']['bm']['path']['folder'] +
+            '\\' + self.info['menu']['bm']['path']['file'])
 
     def state(self):
         return self.info['menu']['state']
@@ -160,3 +164,26 @@ class StdInfo:
 
     def ur_strains(self):
         return self.info['gameplay']['hits']['hitErrorArray']
+
+    def countCircle(self):
+        return self.map.circle()
+
+    def countSlider(self):
+        return self.map.slider()
+
+    def countSpinner(self):
+        return self.map.spinner()
+
+
+class MapInfo:
+    def __init__(self, mapDir):
+        self.map = oppadc.OsuMap(file_path=mapDir)
+
+    def circle(self):
+        return self.map.amount_circle
+
+    def slider(self):
+        return self.map.amount_slider
+
+    def spinner(self):
+        return self.map.amount_spinner

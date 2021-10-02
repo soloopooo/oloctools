@@ -20,28 +20,32 @@ oloctools实现了一些便利功能（maybe
 
 <strong>以下功能部分依赖gosumemory</strong>
 
-- [x] 本地recent成绩图生成
-- [ ] pp+获取
-- [ ] pp+图片化
-- [ ] 网络获取recent, userbest, mapbest生成成绩图
-- [ ] 铺面指定参数pp计算
-- [ ] 铺面详情
-- [ ] 铺面详情图片化
-- [ ] 个人信息
-- [ ] 个人信息图片化
-- [ ] reply解析出图
-- [ ] 整合osr2mp4
-- [ ] 热门铺面下载
-- [ ] 铺面参数筛选下载
-- [ ] 批量指定参数删图
-- [ ] gosu自动部署
-- [ ] InGameDownloader自动部署
-- [ ] 使用reply一键上传视频至bilibili
+全本地功能标`+`，涉及到网络的功能标`-`
+
+- [x] `+`recent成绩图生成
+- [ ] `-`pp+获取
+- [ ] `-`pp+图片化
+- [ ] `-`获取recent, userbest, mapbest生成成绩图
+- [ ] `+`铺面指定参数pp计算
+- [ ] `+`铺面详情
+- [ ] `+`铺面详情图片化
+- [ ] `-`个人信息
+- [ ] `-`个人信息图片化
+- [ ] `+`reply解析出图
+- [ ] `+`整合osr2mp4
+- [ ] `-`热门铺面下载
+- [ ] `-`铺面参数筛选下载
+- [ ] `+`批量指定参数删图
+- [ ] `-`gosu自动部署
+- [ ] `-`osu自动部署更新(sayo)
+- [ ] `-`InGameDownloader自动部署
+- [ ] `-`使用reply一键上传视频至bilibili
 
 </details>
 
 ## 感谢
 [Gosumemory](https://github.com/l3lackShark/gosumemory)  
+[Sayobot.cn](https://osu.sayobot.cn/home)
 
 ## 更新日志
 ### 2021/9/26

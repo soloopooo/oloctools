@@ -1,10 +1,12 @@
 import os
 from re import X
 from package.info.std import StdInfo
+from package.info.std import MapInfo
 from loguru import logger
 from .bgMaker import BgMaker
-from PIL import Image
+from PIL import Image, ImageOps, ImageDraw, ImageFont
 from package.Image.pilJudge import pilJudge
+from package.Image.chart import lineChart
 import ujson
 import package.Config.config as configs
 from .memPlayTime import get_played_time
@@ -25,7 +27,9 @@ def main():
     stat = status(info)
     if stat:
         im = bg(info)
-        im.show()
+        logger.info('展示图片...')
+        im = output(im, info)
+        im.convert('RGB').show()
         ifSave(im, info)
     else:
         logger.error('游戏状态不正确')
@@ -92,10 +96,8 @@ def bg(info):
     bgMaker = BgMaker(info)
     bg = bgMaker.bgMake()
     logger.info('背景图片处理完毕')
-
     modelJson = ujson.load(open(r'model/RecentPlay/model.json'))
     im = paste(modelJson['modelBg'], bg)
-    im = output(im, info)
     return im
 
 
@@ -276,6 +278,18 @@ def output(im, info):
                 text = str({0}).format(info.accuracy()) + '%'
             elif key == 'ur':
                 text = round(float(str({0}).format(info.ur())), 2)
+            elif key == 'time_length':
+                now = info.time_length_now() / 1000
+                now_min = int(now / 60)
+                now_sec = int(now % 60)
+
+                full = info.time_length_full() / 1000
+                full_min = int(full / 60)
+                full_sec = int(full % 60)
+                if info.state() == 2:
+                    text = f'{now_min}:{now_sec}/{full_min}:{full_sec}'
+                else:
+                    text = f'{full_min}:{full_sec}'
             else:
                 text = eval(f'info.{key}()')
             return text
@@ -293,12 +307,143 @@ def output(im, info):
             n += 1
         return im
 
+    def mod(im, info):
+        """
+        打印mod图标
+        """
+        logger.info('输出mod图标')
+        modJson = jsonInfo['info']['mod']
+        mods_str = str.lower(info.mod_str())  # 把所有字符中的大写字母转换成小写字母
+        if mods_str == 'nm':  # 判断是否无mod
+            logger.info('无mod，跳过')
+            a = ''
+        else:
+            logger.info(f'拆分mod字符串{mods_str}')
+            a = []
+            i = 0
+            tmp = ""
+            for v in mods_str:
+                tmp += v
+                i += 1
+                if i % 2 == 0:
+                    a.append(tmp)
+                    tmp = ""
+        x = modJson['location']['x']
+        y = modJson['location']['y']
+        size = (modJson['size']['w'], modJson['size']['h'])
+        logger.info(f'mod图标大小为{size}, 排列打印图标')
+        if modJson['direction'] != ('down' or 'right'):
+            logger.error(r'请查看model/RecentPlay/model.json内info->mod->direction是否为right或down')
+            logger.error(r'采用默认right横向排列mod图标')
+        for a in a:  # 循环打印
+            logger.info(f'打印{a.upper()}')
+            img = eval(f'modJson[\'icon\'][\'{a}\']')
+            img = Image.open(img)
+            img = img.resize(size)
+            im.paste(img, (x, y), img)
+            if modJson['direction'] == 'down':
+                y += modJson['spacing']
+            elif modJson['direction'] == 'right':
+                x += modJson['spacing']
+            else:
+                x += modJson['spacing']
+        return im
+
+    def avatar(im, info):
+        """
+        打印头像，使用模板文件内的shapeModel路径裁剪头像
+        :param im:
+        :param info:
+        :return:
+        """
+        avatarJson = jsonInfo['avatar']
+        if info.player_name() == 'osu!':
+            avatar = Image.open(avatarJson['osu'])
+        else:
+            avatar = Image.open(avatarJson['avatar'])
+        size = (avatarJson['size']['w'], avatarJson['size']['h'])
+        avatar = avatar.resize(size)
+        if avatarJson['shapeModel'] is not None:
+            border = Image.open(avatarJson['shapeModel'])
+            border = border.resize(size).convert('L')
+            invert = ImageOps.invert(border)
+            avatar.putalpha(invert)
+        im.paste(avatar, (avatarJson['location']['x'], avatarJson['location']['y']), avatar)
+        return im
+
+    def pp(im, info):
+        """
+        打印获得的pp
+        :param im:图
+        :param info:信息
+        :return: 图
+        """
+        pp = info.pp_current()
+        ppJson = jsonInfo['info']['pp']
+        pp_width, pp_height = ImageFont.truetype(ppJson['pp_num']['font'], ppJson['pp_num']['size']).getsize(str(pp))
+        str_width, str_height = ImageFont.truetype(ppJson['pp_str']['font'], ppJson['pp_str']['size']).getsize(str(pp))
+        im_width = pp_width + str_width
+        im_height = max(pp_height, str_height) + str_height + ppJson['pp_str']['y_offset']
+
+        i = Image.new("RGBA", (im_width, im_height), (255, 255, 255, 0))
+        draw = ImageDraw.Draw(i)
+        ppJson_a = ppJson['pp_num']
+        fill = (ppJson_a['color']['r'], ppJson_a['color']['g'], ppJson_a['color']['b'])
+        draw.text((0, 0), str(pp), fill=fill,
+                  font=ImageFont.truetype(ppJson_a['font'], ppJson_a['size']))
+
+        ppJson_b = ppJson['pp_str']
+        location = (pp_width, max(pp_height, str_height) + ppJson['pp_str']['y_offset'] - str_height)
+        fill = (ppJson_b['color']['r'], ppJson_b['color']['g'], ppJson_b['color']['b'])
+        draw.text(location, 'pp', fill=fill,
+                  font=ImageFont.truetype(ppJson_b['font'], ppJson_b['size']))
+        # 打印
+        align = ppJson['align']
+        locations = ppJson['location']
+        if align == 'left':
+            location = (locations['x'], locations['y'])
+        elif align == 'right':
+            location = (locations['x'] - i.width, locations['y'])
+        elif align == 'centre':
+            location = (int(locations['x'] - (i.width / 2)), locations['y'])
+        im.paste(i, location, i)
+
+        return im
+
+    def chart(im, info):
+        urJson = jsonInfo['info']['lineChart']['ur']
+        ur = info.ur_strains()
+        leftTop = (urJson['location']['leftTop']['x'], urJson['location']['leftTop']['y'])
+        rightBelow = (urJson['location']['rightBelow']['x'], urJson['location']['rightBelow']['y'])
+        lineWidth = urJson['line']['width']
+        lineColor = (urJson['line']['color']['r'], urJson['line']['color']['g'], urJson['line']['color']['b'])
+        im = lineChart(im, ur, leftTop, rightBelow, lineWidth, lineColor, align=1)
+
+        ppJson = jsonInfo['info']['lineChart']['pp']
+        pp = info.pp_strains()
+        leftTop = (ppJson['location']['leftTop']['x'], ppJson['location']['leftTop']['y'])
+        rightBelow = (ppJson['location']['rightBelow']['x'], ppJson['location']['rightBelow']['y'])
+        lineWidth = ppJson['line']['width']
+        lineColor = (ppJson['line']['color']['r'], ppJson['line']['color']['g'], ppJson['line']['color']['b'])
+        im = lineChart(im, pp, leftTop, rightBelow, lineWidth, lineColor, align=1)
+        return im
+
     def outputMain(im, info):
+        """
+        主函数，运行以上所有函数
+        :param im: 图
+        :param info: 信息
+        :return: 图
+        """
         im = playTime(im)
         im = normalInfo(im, info)
         im = rankStatus(im, info)
         im = rankIcon(im, info)
         im = innormal(im, info)
+        im = mod(im, info)
+        im = avatar(im, info)
+        im = pp(im, info)
+        im = chart(im, info)
         return im
 
     im = outputMain(im, info)
@@ -314,6 +459,38 @@ def ifSave(im, info):
     :param info: 传入
     :return: 无
     """
+
+    def save(im, time):
+        """
+        尝试保存，无路径创建路径
+        :param im: pil图片
+        :param time: 图片名
+        :return:
+        """
+        try:
+            logger.info(f'正在保存成绩图，名称为:{time}.jpg')
+            im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
+        except FileNotFoundError as e:
+            logger.warning(f'出现错误:{e}')
+            logger.info('判断目录是否存在')
+            isExists = os.path.exists(r'data/recentPlay/')
+            if not isExists:
+                logger.info('目录不存在,创建目录')
+                os.makedirs(r'data/recentPlay/')
+            isExists = os.path.exists(r'data/recentPlay/')
+            if isExists:
+                logger.info('目录已创建')
+                try:
+                    logger.info(f'正在保存成绩图，名称为:{time}.jpg')
+                    im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
+                except Exception as e:
+                    logger.error(f'保存图片失败:{e}')
+            else:
+                logger.error('创建失败')
+                logger.error('保存图片失败')
+        except Exception as e:
+            logger.error(f'保存图片失败:{e}')
+
     allConfig = configs.RecentPlay()
     autoSaveConfig = allConfig.AutoSave()
 
@@ -322,40 +499,16 @@ def ifSave(im, info):
 
     if autoSaveConfig.rankAutoSave(info.rank_result()):
         logger.info('达到指定rank，自动保存')
-        logger.info(f'正在保存成绩图，名称为:{time}.jpg')
-        im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
+        save(im, time)
         im.close()
     elif autoSaveConfig.accAutoSave() >= info.accuracy():
         logger.info('达到指定acc，自动保存')
-        logger.info(f'正在保存成绩图，名称为:{time}.jpg')
-        im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
+        save(im, time)
         im.close()
     else:
         sec = input('是否保存成绩图？(Y/N)')
         if sec == 'Y' or sec == 'y':
-            try:
-                logger.info(f'正在保存成绩图，名称为:{time}.jpg')
-                im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
-            except FileNotFoundError as e:
-                logger.warning(f'出现错误:{e}')
-                logger.info('判断目录是否存在')
-                isExists = os.path.exists(r'data/recentPlay/')
-                if not isExists:
-                    logger.info('目录不存在,创建目录')
-                    os.makedirs(r'data/recentPlay/')
-                isExists = os.path.exists(r'data/recentPlay/')
-                if isExists:
-                    logger.info('目录已创建')
-                    try:
-                        logger.info(f'正在保存成绩图，名称为:{time}.jpg')
-                        im.save(r'data/recentPlay/'f'{time}.jpg', 'JPEG')
-                    except Exception as e:
-                        logger.error(f'保存图片失败:{e}')
-                else:
-                    logger.error('创建失败')
-                    logger.error('保存图片失败')
-            except Exception as e:
-                logger.error(f'保存图片失败:{e}')
+            save(im, time)
             logger.info('尝试保存完毕')
             im.close()
         else:

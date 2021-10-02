@@ -4,6 +4,19 @@
     "height": 1080
   },
   "modelBg": "resource/image/image_model/score_model.png",
+  "avatar": {
+    "avatar": "resource/image/avatar.jpg",
+    "osu": "resource/image/osu!.png",
+    "size": {
+      "w": 101,
+      "h": 101
+    },
+    "location": {
+      "x": 1134,
+      "y": 489
+    },
+    "shapeModel": "resource/image/image_model/avatar-a.png"
+  },
   "rankStatusIcon": {
     "unknown": "resource/image/map_status/approved.png",
     "unsubmitted": "resource/image/map_status/approved.png",
@@ -36,6 +49,36 @@
     }
   },
   "info": {
+    "mod": {
+      "size": {
+        "w": 123,
+        "h": 83
+      },
+      "location": {
+        "x": 1770,
+        "y": 210
+      },
+      "direction": "down",
+      "spacing": 100,
+      "icon": {
+        "ap": "resource/image/mods/AP.png",
+        "at": "resource/image/mods/at.png",
+        "cn": "resource/image/mods/cn.png",
+        "dt": "resource/image/mods/dt.png",
+        "ez": "resource/image/mods/ez.png",
+        "fl": "resource/image/mods/fl.png",
+        "hd": "resource/image/mods/hd.png",
+        "hr": "resource/image/mods/hr.png",
+        "nc": "resource/image/mods/nc.png",
+        "nf": "resource/image/mods/nf.png",
+        "pf": "resource/image/mods/pf.png",
+        "rx": "resource/image/mods/rx.png",
+        "sd": "resource/image/mods/sd.png",
+        "so": "resource/image/mods/so.png",
+        "tg": "resource/image/mods/tg.png",
+        "v2": "resource/image/mods/v2.png"
+      }
+    },
     "playTime": {
       "playTimeDay": {
         "location": {
@@ -74,6 +117,74 @@
       "location": {
         "x": 30,
         "y": 980
+      }
+    },
+    "pp": {
+      "location": {
+        "x": 960,
+        "y": 870
+      },
+      "pp_num": {
+        "font": "resource/fonts/Torus-SemiBold.ttf",
+        "size": 70,
+        "color": {
+          "r": 222,
+          "g": 0,
+          "b": 255
+        }
+      },
+      "pp_str": {
+      "font": "resource/fonts/Torus-SemiBold.ttf",
+      "size": 62,
+      "color": {
+        "r": 237,
+        "g": 187,
+        "b": 255
+      },
+      "y_offset": 0
+    },
+      "align": "centre"
+    },
+    "lineChart": {
+      "ur": {
+        "location": {
+          "leftTop": {
+            "x": 1512,
+            "y": 950
+          },
+          "rightBelow": {
+            "x": 1917,
+            "y": 1075
+          }
+        },
+        "line":{
+          "width": 1,
+          "color": {
+            "r": 234,
+            "g": 200,
+            "b": 92
+          }
+        }
+      },
+      "pp": {
+        "location": {
+          "leftTop": {
+            "x": 1514,
+            "y": 7
+          },
+          "rightBelow": {
+            "x": 1917,
+            "y": 128
+          }
+        },
+        "line":{
+          "width": 2,
+          "color": {
+            "r": 234,
+            "g": 200,
+            "b": 92
+          }
+        }
       }
     },
     "normal": {
@@ -247,8 +358,8 @@
       },
       "slider_breaks": {
         "location": {
-          "x": 650,
-          "y": 601
+          "x": 1592,
+          "y": 904
         },
         "font": "resource/fonts/Torus-Regular.ttf",
         "size": 38,
@@ -257,12 +368,12 @@
           "g": 142,
           "b": 211
         },
-        "align": "cc"
+        "align": "lc"
       },
       "stars": {
         "location": {
-          "x": 650,
-          "y": 601
+          "x": 960,
+          "y": 131
         },
         "font": "resource/fonts/Torus-SemiBold.ttf",
         "size": 39,
@@ -384,6 +495,34 @@
           "b": 172
         },
         "align": "lc"
+      },
+      "countCircle": {
+        "location": {
+          "x": 121,
+          "y": 143
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 36,
+        "color": {
+          "r": 235,
+          "g": 194,
+          "b": 0
+        },
+        "align": "lc"
+      },
+      "countSlider": {
+        "location": {
+          "x": 121,
+          "y": 229
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 36,
+        "color": {
+          "r": 235,
+          "g": 194,
+          "b": 0
+        },
+        "align": "lc"
       }
     },
     "innormal": {
@@ -393,20 +532,20 @@
           "y": 63
         },
         "font": "resource/fonts/Torus-Regular.ttf",
-        "size": 41,
+        "size": 36,
         "color": {
-          "r": 255,
-          "g": 142,
-          "b": 211
+          "r": 235,
+          "g": 194,
+          "b": 0
         },
-        "align": "ra"
+        "align": "lc"
       },
       "mapper": {
         "location": {
           "x": 960,
-          "y": 347
+          "y": 337
         },
-        "font": "resource/fonts/Torus-Regular.ttf",
+        "font": "resource/fonts/Torus-SemiBold.ttf",
         "size": 48,
         "color": {
           "r": 111,
@@ -526,6 +665,20 @@
           "b": 255
         },
         "align": "rb"
+      },
+      "time_length": {
+        "location": {
+          "x": 121,
+          "y": 315
+        },
+        "font": "resource/fonts/Torus-Regular.ttf",
+        "size": 36,
+        "color": {
+          "r": 235,
+          "g": 194,
+          "b": 0
+        },
+        "align": "lc"
       }
     }
   }
