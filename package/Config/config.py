@@ -38,6 +38,34 @@ class RecentPlay:
             return self.config.getint('AutoSave', 'acc_AutoSave')
 
 
+class Proxy:
+    def __init__(self):
+        config = configparser.ConfigParser()
+        path = r'config\Proxy.ini'
+        config.read(path)
+        self.config = config
+
+    def httpProxy(self):
+        return self.config.get('proxy', 'httpProxy')
+
+    def switch_ppPlus(self):
+        return self.config.getboolean('proxySwitch', 'ppPlusGet')
+
+
+class User:
+    def __init__(self):
+        config = configparser.ConfigParser()
+        path = r'config\User.ini'
+        config.read(path)
+        self.config = config
+
+    def username(self):
+        return self.config.get('User', 'username')
+
+    def userid(self):
+        return self.config.get('User', 'userid')
+
+
 if __name__ == '__main__':
     bg = RecentPlay().BackGround()
     print(bg.dim())

@@ -23,9 +23,9 @@ oloctools实现了一些便利功能（maybe
 全本地功能标`+`，涉及到网络的功能标`-`
 
 - [x] `+`recent成绩图生成
-- [ ] `-`pp+获取
+- [x] `-`pp+获取
 - [ ] `-`pp+图片化
-- [ ] `-`获取recent, userbest, mapbest生成成绩图
+- [ ] `-`获取Recent, UserBest, MapBest生成成绩图
 - [ ] `+`铺面指定参数pp计算
 - [ ] `+`铺面详情
 - [ ] `+`铺面详情图片化
@@ -48,6 +48,10 @@ oloctools实现了一些便利功能（maybe
 [Sayobot.cn](https://osu.sayobot.cn/home)
 
 ## 更新日志
+### 2021/10/2
+* 本地成绩图完成
+* pp+信息显示完成
+
 ### 2021/9/26
 * 本地成绩图初步完成
 
