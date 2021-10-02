@@ -501,7 +501,7 @@ def ifSave(im, info):
         logger.info('达到指定rank，自动保存')
         save(im, time)
         im.close()
-    elif autoSaveConfig.accAutoSave() >= info.accuracy():
+    elif autoSaveConfig.accAutoSave() <= info.accuracy():
         logger.info('达到指定acc，自动保存')
         save(im, time)
         im.close()
