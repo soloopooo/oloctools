@@ -32,7 +32,7 @@ oloctools实现了一些便利功能（maybe
 - [ ] `-`个人信息
 - [ ] `-`个人信息图片化
 - [ ] `+`reply解析出图
-- [ ] `+`整合osr2mp4
+- [ ] `+`整合osr2mp4(不使用不下载，第一次使用自动`-`下载)
 - [ ] `-`热门铺面下载
 - [ ] `-`铺面参数筛选下载
 - [ ] `+`批量指定参数删图
@@ -46,6 +46,9 @@ oloctools实现了一些便利功能（maybe
 ## 感谢
 [Gosumemory](https://github.com/l3lackShark/gosumemory)  
 [Sayobot.cn](https://osu.sayobot.cn/home)
+
+## TODO
+- [ ] 成绩图标题 作图人 玩家名超级长超出范围问题解决
 
 ## 更新日志
 ### 2021/10/2

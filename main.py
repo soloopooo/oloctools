@@ -1,16 +1,18 @@
 from tools.recent.std import main as re_std
 from tools.pp_plus.ppPlusGet import main as pp_plus_get
+from tools.map_download.hotMap.hotMapDownloader import main as hot_map_download
+from loguru import logger
 import os
 
 
-def recent():
+def tryDefine(str):
     try:
-        re_std.main()
+        eval(str)
     except Exception as e:
-        print(e)
+        logger.error(e)
 
 
-if __name__ == '__main__':
+def main():
     text = ("1.`+`recent成绩图生成\n"
             "2.`-`pp+获取")
     while True:
@@ -26,8 +28,15 @@ if __name__ == '__main__':
         print(text)
         sec = input('\n请输入要使用的功能:')
         if sec == '1':
-            recent()
+            tryDefine('re_std()')
         elif sec == '2':
-            pp_plus_get()
+            tryDefine('pp_plus_get()')
+        elif sec == '3':
+            tryDefine('hot_map_download()')
+
         input('按下回车返回主界面')
         os.system('cls')
+
+
+if __name__ == '__main__':
+    main()
