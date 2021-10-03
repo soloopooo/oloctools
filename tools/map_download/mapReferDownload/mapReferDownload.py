@@ -1,6 +1,7 @@
 import asyncio
 import os
 import re
+import httpx
 
 from package.Config.config import Download as downloadConfig
 from package.osuDatabase.osu_db import create_db as osu_db_export
@@ -9,12 +10,12 @@ from package.Config.config import Proxy
 from package.osuDir import songsDir
 from package.osuDir import osuDirGet
 from loguru import logger
-import httpx
+from guietta import Gui, Ok
 
 
 def main():
     """
-    热门ranked铺面下载主函数
+    指定参数铺面下载主函数
     :return: 无
     """
     con = Proxy()  # 配置文件代理类
@@ -27,15 +28,7 @@ def main():
     else:
         proxy = None
 
-    limit = float(input('请输入下载量，建议200以内:'))
-    i = input('是否下载无视频版本(y/n):')
-
-    if i == ("Y" or "y"):
-        no_video = True
-    else:
-        no_video = False
-
-    loader = Downloader(limit, no_video, proxy)
+    loader = Downloader(proxy)
     asyncio.run(loader.run())
     input('按下回车返回')
 
@@ -49,10 +42,17 @@ class Downloader:
     下载类
     """
 
-    def __init__(self, limit, no_video, proxy):
+    def __init__(self, proxy):
+        self.limit = float(input('请输入下载量，建议200以内:'))
+        i = input('是否下载无视频版本(y/n):')
+        if i == ("Y" or "y"):
+            self.no_video = True
+        else:
+            self.no_video = False
+
+        star_min = input('请输入最低stars:')
+        star_max = input('请输入最高stars:')
         self.beatmapsets = []
-        self.limit = limit
-        self.no_video = no_video
         self.proxy = proxy
         self.dConfig = downloadConfig()
 
@@ -188,3 +188,27 @@ class Downloader:
             n += 1
         await asyncio.gather(*task_list)
         logger.info(" 下载结束 ".center(50, "#") + "\n")
+
+
+def gui_to_input_params():
+    gui = Gui(
+        ['', '最小值', '最大值'],
+        ['stars', '__starMin__', '__starMax__'],
+        ['cs', '__csMin__', '__csMax__'],
+        ['od', '__odMin__', '__odMax__'],
+        ['ar', '__csMin__', '__arMax__'],
+        ['hp', '__hpMin__', '__hpMax__'],
+        ['cs', '__csMin__', '__csMax__'],
+        ['bpm', '__bpmMin__', '__bpmMax__'],
+    )
+    gui.title('填写参数')
+
+    gui.result = {
+        "min": {
+            "stars": gui.starMin,
+            "cs": gui.csMin,
+            "od": gui.odMin
+        }
+    }
+    """Coding Now"""
+    gui.run()

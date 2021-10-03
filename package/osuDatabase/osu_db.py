@@ -172,5 +172,4 @@ def create_db(filename):
 
 
 if __name__ == "__main__":
-    a = OsuDB()
-    a.beatmapset()
+    create_db(r'D:\OSU\OSU\osu!.db')
