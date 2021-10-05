@@ -172,4 +172,4 @@ def create_db(filename):
 
 
 if __name__ == "__main__":
-    create_db(r'D:\OSU\OSU\osu!.db')
+    create_db(r'D:\osu\osu!.db')

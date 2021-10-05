@@ -1,4 +1,4 @@
-from tools.recent.std import main as re_std
+from tools.recent.std.main import main as re_std
 from tools.pp_plus.ppPlusGet import main as pp_plus_get
 from tools.map_download.hotMap.hotMapDownloader import main as hot_map_download
 from loguru import logger
@@ -17,13 +17,13 @@ def main():
             "2.`-`pp+获取\n"
             "3.`-`热门铺面下载(from sayo)")
     while True:
-        print(r""" _____   _       _____   _____   _____   _____   _____   _       _____  
-/  _  \ | |     /  _  \ /  ___| |_   _| /  _  \ /  _  \ | |     /  ___/ 
-| | | | | |     | | | | | |       | |   | | | | | | | | | |     | |___  
-| | | | | |     | | | | | |       | |   | | | | | | | | | |     \___  \ 
-| |_| | | |___  | |_| | | |___    | |   | |_| | | |_| | | |___   ___| | 
-\_____/ |_____| \_____/ \_____|   |_|   \_____/ \_____/ |_____| /_____/ 
-                                                    -----by Adsicmes""")
+        print(" _____   _       _____   _____   _____   _____   _____   _       _____  "
+              "/  _  \ | |     /  _  \ /  ___| |_   _| /  _  \ /  _  \ | |     /  ___/ "
+              "| | | | | |     | | | | | |       | |   | | | | | | | | | |     | |___  "
+              "| | | | | |     | | | | | |       | |   | | | | | | | | | |     \___  \ "
+              "| |_| | | |___  | |_| | | |___    | |   | |_| | | |_| | | |___   ___| | "
+              "\_____/ |_____| \_____/ \_____|   |_|   \_____/ \_____/ |_____| /_____/ "
+              "                                                       -----by Adsicmes")
         print("""\n\n全本地功能标`+`，涉及到网络的功能标`-`""")
         print("""目前已有功能:\n""")
         print(text)

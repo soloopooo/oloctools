@@ -10,7 +10,6 @@ from package.Config.config import Proxy
 from package.osuDir import songsDir
 from package.osuDir import osuDirGet
 from loguru import logger
-from guietta import Gui, Ok
 
 
 def main():
@@ -36,6 +35,13 @@ def main():
 DOWNLOAD_PATH = songsDir()
 
 
+def postData():
+    logger.start('准备输入参数')
+    data = {}
+    
+    return data
+
+
 # 引用自vincentmathis/osu-beatmap-downloader
 class Downloader:
     """
@@ -43,15 +49,12 @@ class Downloader:
     """
 
     def __init__(self, proxy):
-        self.limit = float(input('请输入下载量，建议200以内:'))
         i = input('是否下载无视频版本(y/n):')
         if i == ("Y" or "y"):
             self.no_video = True
         else:
             self.no_video = False
 
-        star_min = input('请输入最低stars:')
-        star_max = input('请输入最高stars:')
         self.beatmapsets = []
         self.proxy = proxy
         self.dConfig = downloadConfig()
@@ -76,34 +79,20 @@ class Downloader:
         从sayo镜像站获取热门铺面信息，并添加铺面json至self.beatmapsets
         :return: 无
         """
-        url = "https://api.sayobot.cn/beatmaplist"
+        url = "https://api.sayobot.cn/?post"
+        data = postData()
 
-        if self.limit > 200:
-            limit = self.limit
-            offset = 0
-            while limit > 0:
-                params = {
-                    "O": offset,
-                    "L": limit,
-                    "T": 1,  # type hot
-                    "M": 1,  # mode std
-                    "C": 1,  # class Ranked&Approved
-                }
-                r = self.session.get(url, params=params)
+        if data['limit'] > 200:
+            while data['limit'] > 0:
+                r = self.session.post(url, data=data)
                 r = r.json()
                 # 遍历 输入所有搜索到的铺面信息
                 for i in r['data']:
                     self.beatmapsets.append(i)
-                limit -= 200
-                offset += 200
+                data['limit'] -= 200
+                data['offset'] += 200
         else:
-            params = {
-                "L": self.limit,  # 数量限制
-                "T": 1,  # type hot
-                "M": 1,  # mode std
-                "C": 1,  # class Ranked&Approved
-            }
-            r = self.session.get(url, params=params)
+            r = self.session.post(url, data=data)
             r = r.json()
             # 遍历 输入所有搜索到的铺面信息
             for i in r['data']:
@@ -188,27 +177,3 @@ class Downloader:
             n += 1
         await asyncio.gather(*task_list)
         logger.info(" 下载结束 ".center(50, "#") + "\n")
-
-
-def gui_to_input_params():
-    gui = Gui(
-        ['', '最小值', '最大值'],
-        ['stars', '__starMin__', '__starMax__'],
-        ['cs', '__csMin__', '__csMax__'],
-        ['od', '__odMin__', '__odMax__'],
-        ['ar', '__csMin__', '__arMax__'],
-        ['hp', '__hpMin__', '__hpMax__'],
-        ['cs', '__csMin__', '__csMax__'],
-        ['bpm', '__bpmMin__', '__bpmMax__'],
-    )
-    gui.title('填写参数')
-
-    gui.result = {
-        "min": {
-            "stars": gui.starMin,
-            "cs": gui.csMin,
-            "od": gui.odMin
-        }
-    }
-    """Coding Now"""
-    gui.run()

@@ -68,23 +68,22 @@ class Downloader:
         else:
             self.session = httpx.Client(headers=headers)
 
-        self.scrape_beatmapsets()
+        
         self.remove_existing_beatmapsets()
 
-    def scrape_beatmapsets(self):
+    def scrape_beatmapsets(self, limit, local_offset=0):
         """
         从sayo镜像站获取热门铺面信息，并添加铺面json至self.beatmapsets
-        :return: 无
+        :return: 铺面信息添加至self.beatmapsets
         """
         url = "https://api.sayobot.cn/beatmaplist"
 
-        if self.limit > 200:
-            limit = self.limit
-            offset = 0
-            while limit > 0:
+        if limit > 200:  # 如果要搜的图大于200
+            offset = local_offset  # 初始化偏移
+            while limit > 200:  # 当大于200  循环进行200个铺面的搜索
                 params = {
-                    "O": offset,
-                    "L": limit,
+                    "O": offset,  # 从偏移位置搜索
+                    "L": 200,
                     "T": 1,  # type hot
                     "M": 1,  # mode std
                     "C": 1,  # class Ranked&Approved
@@ -94,48 +93,96 @@ class Downloader:
                 # 遍历 输入所有搜索到的铺面信息
                 for i in r['data']:
                     self.beatmapsets.append(i)
-                limit -= 200
-                offset += 200
-        else:
+                limit -= 200  # 数量-200，准备下一轮
+                offset += 200  # 偏移+200，准备下一轮
+
+            if limit > 0:  # while结束，如果还有大于0小于200的图未搜索
+                params = {
+                    "O": offset,  # 从offset开始
+                    "L": limit,  # 搜索剩余量的图
+                    "T": 1,  # type hot
+                    "M": 1,  # mode std
+                    "C": 1,  # class Ranked&Approved
+                }   
+                r = self.session.get(url, params=params)
+                r = r.json()
+                # 遍历 输入所有搜索到的铺面信息
+                for i in r['data']:
+                    self.beatmapsets.append(i)
+                offset += limit  # offset添加，为查重后再次搜索做准备
+                
+        else:  # 如果要搜的图小于200
             params = {
-                "L": self.limit,  # 数量限制
+                "L": limit,  # 目标数量的图
                 "T": 1,  # type hot
                 "M": 1,  # mode std
                 "C": 1,  # class Ranked&Approved
             }
+            if local_offset > 0:  # 如果大于0，也就是筛图后的搜图
+                params['L'] = local_offset  # 添加offset参数
             r = self.session.get(url, params=params)
             r = r.json()
             # 遍历 输入所有搜索到的铺面信息
             for i in r['data']:
                 self.beatmapsets.append(i)
+            offset = limit
         num_beatmapsets = len(self.beatmapsets)
         logger.success(f"获取到了 {num_beatmapsets} beatmapsets")
+        return offset  # 返回搜索完的位置
 
     def remove_existing_beatmapsets(self):
         """
         移除已经存在于Songs文件夹的铺面
         读取osu!.db数据库
-        :return: 无
+        :return: 修改self.beatmapsets
         """
         # 获取已经存在的所有铺面 输出列表
+        offset = self.scrape_beatmapsets(self.limit)  # 先获取再查重嘛, offset是为筛掉图做准备
+        origin_maps = len(self.beatmapsets)  # 筛掉之前的铺面量
         logger.info('铺面查重')
         logger.info('导出osu!.db')
         osu_db_export(osuDirGet() + 'osu!.db')  # 导出当前osu!.db为sqlite3
         database = OsuDB()
         logger.info('获取sid')
         bmset = database.beatmapset()
+
         n = 0
-        map_to_del = []
+        map_to_del = []  # 要删的图
         for i in self.beatmapsets:
             if i['sid'] in bmset:
                 logger.info(f"铺面 sid:{i['sid']}--{i['title']} 已经下载过了.")
-                map_to_del.append(n)
+                map_to_del.append(n)  # 添加的是该图的索引
             n += 1
 
-        map_to_del.sort(reverse=True)
+        map_to_del.sort(reverse=True)  # 反向排序，从最后删，否则索引会变
         for i in map_to_del:
-            self.beatmapsets.pop(i)
-        logger.success(f'筛选出了{len(self.beatmapsets)}张铺面')
+            self.beatmapsets.pop(i)  # 按照索引删图
+            
+        now_maps = len(self.beatmapsets)  # 筛选后的map量
+        logger.success(f'筛选出了{now_maps}张铺面')
+        while origin_maps - now_maps > 0:  # 如果筛掉了map，循环，直到够量
+            logger.info('不够量，再次获取！')
+            limit = origin_maps - now_maps  # 筛掉的图的量
+            origin_maps = len(self.beatmapsets)
+            offset = self.scrape_beatmapsets(limit, offset)  # 搜索筛掉的图的量，从上次搜索的最后开始，顺便更新offset
+
+            # 新一轮筛图
+            n = 0
+            map_to_del = []  # 要删的图
+            for i in self.beatmapsets:
+                if i['sid'] in bmset:
+                    logger.info(f"铺面 sid:{i['sid']}--{i['title']} 已经下载过了.")
+                    map_to_del.append(n)  # 添加的是该图的索引
+                n += 1
+
+            map_to_del.sort(reverse=True)  # 反向排序，从最后删，否则索引会变
+            for i in map_to_del:
+                self.beatmapsets.pop(i)  # 按照索引删图
+                
+            now_maps = len(self.beatmapsets)  # 筛选后的map量
+            logger.success(f'筛选出了{now_maps}张铺面')
+
+
 
     async def download_beatmapset_file(self, beatmapset, sem):
         """
