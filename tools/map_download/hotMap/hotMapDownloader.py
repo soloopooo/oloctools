@@ -30,20 +30,20 @@ def main():
     limit = float(input('请输入下载量，建议200以内:'))
     i = input('是否下载无视频版本(y/n):')
 
-    if i == ("Y" or "y"):
+    if i == "Y" or i == "y":
         no_video = True
     else:
         no_video = False
 
     loader = Downloader(limit, no_video, proxy)
-    asyncio.run(loader.run())
+    # asyncio.run(loader.run())
     input('按下回车返回')
 
 
 DOWNLOAD_PATH = songsDir()
 
 
-# 引用自vincentmathis/osu-beatmap-downloader
+# 部分引用自vincentmathis/osu-beatmap-downloader
 class Downloader:
     """
     下载类
@@ -119,7 +119,7 @@ class Downloader:
                 "C": 1,  # class Ranked&Approved
             }
             if local_offset > 0:  # 如果大于0，也就是筛图后的搜图
-                params['L'] = local_offset  # 添加offset参数
+                params['O'] = local_offset  # 添加offset参数
             r = self.session.get(url, params=params)
             r = r.json()
             # 遍历 输入所有搜索到的铺面信息
@@ -159,8 +159,8 @@ class Downloader:
             self.beatmapsets.pop(i)  # 按照索引删图
             
         now_maps = len(self.beatmapsets)  # 筛选后的map量
-        logger.success(f'筛选出了{now_maps}张铺面')
-        while origin_maps - now_maps > 0:  # 如果筛掉了map，循环，直到够量
+        logger.info(f'目前有{now_maps}张铺面进入预下载队列')
+        while self.limit > len(self.beatmapsets):  # 如果筛掉了map，循环，直到够量
             logger.info('不够量，再次获取！')
             limit = origin_maps - now_maps  # 筛掉的图的量
             origin_maps = len(self.beatmapsets)
@@ -180,9 +180,7 @@ class Downloader:
                 self.beatmapsets.pop(i)  # 按照索引删图
                 
             now_maps = len(self.beatmapsets)  # 筛选后的map量
-            logger.success(f'筛选出了{now_maps}张铺面')
-
-
+            logger.info(f'目前有{now_maps}张铺面进入预下载队列')
 
     async def download_beatmapset_file(self, beatmapset, sem):
         """
@@ -219,7 +217,7 @@ class Downloader:
         logger.info(f"写入文件: {file_path}")
         with open(file_path, "wb") as outfile:
             outfile.write(data)
-        logger.success("文件写入成功")
+        logger.success(f"文件{filename}写入成功")
 
     async def run(self):
         """

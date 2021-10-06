@@ -1,6 +1,7 @@
 from tools.recent.std.main import main as re_std
 from tools.pp_plus.ppPlusGet import main as pp_plus_get
 from tools.map_download.hotMap.hotMapDownloader import main as hot_map_download
+from tools.map_download.mapReferDownload.mapReferDownload import main as refer_map_download
 from loguru import logger
 import os
 
@@ -15,7 +16,8 @@ def tryDefine(str):
 def main():
     text = ("1.`+`recent成绩图生成\n"
             "2.`-`pp+获取\n"
-            "3.`-`热门铺面下载(from sayo)")
+            "3.`-`热门铺面下载(from sayo)\n"
+            "4.`-`指定参数铺面下载(from sayo)")
     while True:
         print(" _____   _       _____   _____   _____   _____   _____   _       _____  "
               "/  _  \ | |     /  _  \ /  ___| |_   _| /  _  \ /  _  \ | |     /  ___/ "
@@ -34,7 +36,8 @@ def main():
             tryDefine('pp_plus_get()')
         elif sec == '3':
             tryDefine('hot_map_download()')
-
+        elif sec == '4':
+            tryDefine('refer_map_download()')
         input('按下回车返回主界面')
         os.system('cls')
 
