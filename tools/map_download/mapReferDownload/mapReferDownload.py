@@ -141,6 +141,7 @@ class Downloader:
         self.postdata = postData()
         self.dConfig = downloadConfig()
         self.limit = float(input('请输入下载量，建议200以内:'))
+        self.offset = 0
 
         i = input('是否下载无视频版本(y/n):')
         if i == "Y" or i == "y":
@@ -163,7 +164,7 @@ class Downloader:
 
         self.remove_existing_beatmapsets()
 
-    def scrape_beatmapsets(self, limit, local_offset=0):
+    def scrape_beatmapsets(self, limit):
         """
         从sayo镜像站获取热门铺面信息，并添加铺面json至self.beatmapsets
         :return: 铺面信息添加至self.beatmapsets
@@ -172,42 +173,39 @@ class Downloader:
         data = self.postdata
 
         if limit > 200:  # 如果要搜的图大于200
-        
-            offset = local_offset  # 初始化偏移
             while limit > 200:  # 当大于200  循环进行200个铺面的搜索
                 data['limit'] = 200
-                data['offset'] = offset
+                data['offset'] = self.offset
                 r = self.session.post(url, data=ujson.dumps(data))
                 r = r.json()
                 # 遍历 输入所有搜索到的铺面信息
                 for i in r['data']:
                     self.beatmapsets.append(i)
                 limit -= 200  # 数量-200，准备下一轮
-                offset += 200  # 偏移+200，准备下一轮
+                self.offset = r['endid']  # 获取最后的位置偏移
 
             if limit > 0:  # while结束，如果还有大于0小于200的图未搜索
                 data['limit'] = limit
-                data['offset'] = offset
+                data['offset'] = self.offset
                 r = self.session.post(url, data=ujson.dumps(data))
                 r = r.json()
                 # 遍历 输入所有搜索到的铺面信息
                 for i in r['data']:
                     self.beatmapsets.append(i)
-                offset += limit  # offset添加，为查重后再次搜索做准备
+                self.offset = r['endid']  # offset添加，为查重后再次搜索做准备
 
         else:  # 如果要搜的图小于200
             data['limit'] = limit
-            if local_offset > 0:  # 如果大于0，也就是筛图后的搜图
-                data['offset'] = local_offset  # 添加offset参数
+            if self.offset > 0:  # 如果大于0
+                data['offset'] = self.offset  # 添加offset参数
             r = self.session.post(url, data=ujson.dumps(data))
             r = r.json()
             # 遍历 输入所有搜索到的铺面信息
             for i in r['data']:
                 self.beatmapsets.append(i)
-            offset = limit
+            self.offset = r['endid']
         num_beatmapsets = len(self.beatmapsets)
         logger.success(f"获取到了 {num_beatmapsets} beatmapsets")
-        return offset  # 返回搜索完的位置
 
     def remove_existing_beatmapsets(self):
         """
@@ -216,8 +214,7 @@ class Downloader:
         :return: 修改self.beatmapsets
         """
         # 获取已经存在的所有铺面 输出列表
-        offset = self.scrape_beatmapsets(self.limit)  # 先获取再查重嘛, offset是为筛掉图做准备
-        origin_maps = len(self.beatmapsets)  # 筛掉之前的铺面量
+        self.scrape_beatmapsets(self.limit)  # 先获取再查重嘛
         logger.info('铺面查重')
         logger.info('导出osu!.db')
         osu_db_export(osuDirGet() + 'osu!.db')  # 导出当前osu!.db为sqlite3
@@ -242,10 +239,9 @@ class Downloader:
         while self.limit > len(self.beatmapsets):  # 如果筛掉了map，循环，直到够量
             logger.info('不够量，再次获取！')
             input()
-            limit = origin_maps - now_maps  # 筛掉的图的量
-            origin_maps = len(self.beatmapsets)
+            limit = self.limit - len(self.beatmapsets)  # 筛掉的图的量
             # 搜索筛掉的图的量，从上次搜索的最后开始，顺便更新offset
-            offset = self.scrape_beatmapsets(limit, offset)
+            self.scrape_beatmapsets(limit)
 
             # 新一轮筛图
             n = 0

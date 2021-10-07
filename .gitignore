@@ -21,3 +21,4 @@ tools/map_download/hotMap/__pycache__/
 
 tools/pp_plus/__pycache__/
 tools/map_download/mapReferDownload/__pycache__/
+cache.db
